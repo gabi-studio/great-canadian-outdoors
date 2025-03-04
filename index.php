@@ -131,8 +131,9 @@
             $parks = mysqli_query($connect, $query);
 
 
-
-            
+            // check if there are results
+            // if there are, display the results
+            // otherwise display default "No national parks found" message
             if (mysqli_num_rows($parks) > 0) {
                 foreach ($parks as $park) {
                     echo '<div class="park-card">';
@@ -150,7 +151,8 @@
                                 style="width: 100%; height: 200px; object-fit: cover;"
                                 alt="Image Source: ' . htmlspecialchars($park['ImageSource']) . '">';              
                     
-                    
+                    // display the park details
+                    // park name, type, region, date founded, description, activities
                     echo '    <div class="card-body">';
                     echo '      <h2>' . htmlspecialchars($park['ParkName']) . '</h2>';
                     echo '      <p><strong>Type:</strong> ' . htmlspecialchars($park['Type']) . '</p>';
