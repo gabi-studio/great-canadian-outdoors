@@ -23,7 +23,7 @@
                         <option value="">All</option>
                         <option value="National Park">National Park</option>
                         <option value="National Park Reserve">National Park Reserve</option>
-                        <option value="Marine Conservation Area">Marine Conservation Area</option>
+                        <option value="National Marine Conservation Area">National Marine Conservation Area</option>
                     </select>
                 </div>
 
@@ -91,30 +91,23 @@
             // https://www.codecademy.com/learn/seasp-defending-node-applications-from-sql-injection-xss-csrf-attacks/modules/seasp-preventing-sql-injection-attacks/cheatsheet
 
             // initialize whereConditions array to store the matching "filter" for the WHERE conditions in the query
-            // filter array to store the values of the filter from the GET request
-            // types array to store data types of the filter values
-            $whereConditions = [];
-            $filter = [];
-            $types = [];
-
-
-            // check if filters are set and store them as parameters for the parameter binding in the prepared statement
+            // check if filter type is selected
+            // if it is, get the type value and add it to the whereConditions array
             if (!empty($_GET['type'])) {
-                $whereConditions[] = "np.Type = ?";
-                $filter[] = $_GET['type'];
-                $types .= 's'; 
+                $type = mysqli_real_escape_string($connect, $_GET['type']);
+                $whereConditions[] = "np.Type = '$type'";
             }
 
+            // if region is selected, get the region value and add it to the whereConditions array
             if (!empty($_GET['region'])) {
-                $whereConditions[] = "np.Region = ?";
-                $filter[] = $_GET['region'];
-                $types .= 's'; 
+                $region = mysqli_real_escape_string($connect, $_GET['region']);
+                $whereConditions[] = "np.Region = '$region'";
             }
 
+            // if activity is selected, get the activity value and add it to the whereConditions array
             if (!empty($_GET['activity'])) {
-                $whereConditions[] = "na.ActivityName = ?";
-                $filter[] = $_GET['activity'];
-                $types .= 's'; 
+                $activity = mysqli_real_escape_string($connect, $_GET['activity']);
+                $whereConditions[] = "na.ActivityName = '$activity'";
             }
 
             // build the WHERE clause of the query:
@@ -134,22 +127,10 @@
                     $whereSQL
                     GROUP BY np.ID, np.ParkName, np.Type, np.Description, np.DateFounded, np.Region, np.ImagePath, np.ImageSource";
 
-            // prepare the query to prevent SQL injection
-            // references:
-            // https://www.codecademy.com/learn/seasp-defending-node-applications-from-sql-injection-xss-csrf-attacks/modules/seasp-preventing-sql-injection-attacks/cheatsheet
-            $stmt = $connect->prepare($query);
-
-            // bind parameters if there are filters
-            if (!empty($filter)) {
-                $stmt->bind_param($types, ...$filter);
-            }
-
             // execute the query
-            $stmt->execute();
-            $parks = $stmt->get_result();
+            $parks = mysqli_query($connect, $query);
 
 
-            // $parks = mysqli_query($connect, $query);
 
             
             if (mysqli_num_rows($parks) > 0) {
