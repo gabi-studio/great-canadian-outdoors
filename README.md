@@ -5,7 +5,7 @@
 ## Current Features
 - **Browse & Discover**: View a directory of protected outdoor spaces across Canada.
 - **Filter Options**: Narrow your search by **type**, **province or territory**, and **available activities**.
-- **Dynamic Data**: Information is pulled from a database for up-to-date listings.
+- **Dynamic Data and Filters**: Information is pulled from a database for up-to-date listings and filters
 
 ## Future Plans
 - **User Contributions**: Add new outdoor spaces to the directory.
