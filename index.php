@@ -9,80 +9,63 @@
 </head>
 <body>
     <?php include('reusables/nav.php'); ?>
+    <?php include('reusables/functions.php'); ?>
     <div class="container">
         <h1 class="hero">All National Parks, Reserves, Marine Conservation Areas</h1>
+        
+        <!-- get unique values for the filter dropdowns -->
+        <?php
+            $types = getUniqueValues('Type', 'nationalparks', $connect);
+            $regions = getUniqueValues('Region', 'nationalparks', $connect);
+            $activities = getUniqueValues('ActivityName', 'activities', $connect);
+        ?>
         
         <!-- filter forms -->
         <form method="GET" class="filter-form">
             <div class="filters">
 
-                <!-- filter by type of national park -->
+                <!-- Filter by Type of National Park -->
                 <div class="options">
                     <label for="type">Type:</label>
                     <select name="type" class="filter-field">
                         <option value="">All</option>
-                        <option value="National Park">National Park</option>
-                        <option value="National Park Reserve">National Park Reserve</option>
-                        <option value="National Marine Conservation Area">National Marine Conservation Area</option>
+                        <?php foreach ($types as $type): ?>
+                            <option value="<?= htmlspecialchars($type) ?>" <?= (isset($_GET['type']) && $_GET['type'] === $type) ? 'selected' : '' ?>><?= htmlspecialchars($type) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- filter by region (provice or territory) -->
+                <!-- Filter by Region -->
                 <div class="options">
                     <label for="region">Region:</label>
                     <select name="region" class="filter-field">
                         <option value="">All</option>
-                        <option value="Ontario">Ontario</option>
-                        <option value="British Columbia">British Columbia</option>
-                        <option value="Alberta">Alberta</option>
-                        <option value="Quebec">Quebec</option>
-                        <option value="Nova Scotia">Nova Scotia</option>
-                        <option value="Manitoba">Manitoba</option>
-                        <option value="Saskatchewan">Saskatchewan</option>
-                        <option value="New Brunswick">New Brunswick</option>
-                        <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                        <option value="Prince Edward Island">Prince Edward Island</option>
-                        <option value="Northwest Territories">Northwest Territories</option>
-                        <option value="Yukon">Yukon</option>
-                        <option value="Nunavut">Nunavut</option>
+                        <?php foreach ($regions as $region): ?>
+                            <option value="<?= htmlspecialchars($region) ?>" <?= (isset($_GET['region']) && $_GET['region'] === $region) ? 'selected' : '' ?>><?= htmlspecialchars($region) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- filter by activities available -->
+                <!-- Filter by Activities Available -->
                 <div class="options">
                     <label for="activity">Activity:</label>
                     <select name="activity" class="filter-field">
                         <option value="">All</option>
-                        <option value="Scuba Diving">Scuba Diving</option>
-                        <option value="Canoeing">Canoeing</option>
-                        <option value="Skiing">Skiing</option>
-                        <option value="Whitewater Rafting">Whitewater Rafting</option>
-                        <option value="Backpacking">Backpacking</option>
-                        <option value="Bird Watching">Bird Watching</option>
-                        <option value="Hiking">Hiking</option>
-                        <option value="Cycling">Cycling</option>
-                        <option value="Snowshoeing">Snowshoeing</option>
-                        <option value="Fishing">Fishing</option>
-                        <option value="Wildlife Viewing">Wildlife Viewing</option>
-                        <option value="Photography">Photography</option>
-                        <option value="Rock Climbing">Rock Climbing</option>
-                        <option value="Kayaking">Kayaking</option>
-                        <option value="Camping">Camping</option>
-                        <option value="Whale Watching">Whale Watching</option>
-                        <option value="Surfing">Surfing</option>
-                        <option value="Beachcombing">Beachcombing</option>
-                        <option value="Hot Springs">Hot Springs</option>
+                        <?php foreach ($activities as $activity): ?>
+                            <option value="<?= htmlspecialchars($activity) ?>" <?= (isset($_GET['activity']) && $_GET['activity'] === $activity) ? 'selected' : '' ?>><?= htmlspecialchars($activity) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
+
                 <button type="submit" class="btn">Filter</button>
             </div>
-            <!-- <button type="submit" class="btn">Filter</button> -->
         </form>
+
         
 
         <div class="parks-container">
             <?php
-            include('reusables/connection.php');
+            
 
             // building the query based on the filter criteria
             // references:
@@ -93,9 +76,9 @@
             // initialize whereConditions array to store the matching "filter" for the WHERE conditions in the query
             // check if filter type is selected
             // if it is, get the type value and add it to the whereConditions array
-            if (!empty($_GET['type'])) {
-                $type = mysqli_real_escape_string($connect, $_GET['type']);
-                $whereConditions[] = "np.Type = '$type'";
+            if (!empty($_GET['region'])) {
+                $region = mysqli_real_escape_string($connect, $_GET['region']);
+                $whereConditions[] = "np.Region = '$region'";
             }
 
             // if region is selected, get the region value and add it to the whereConditions array
